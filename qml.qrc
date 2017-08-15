@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>qtquickcontrols2.conf</file>
+        <file>TreeView.qml</file>
+        <file>TreeItemDelegate.qml</file>
+    </qresource>
+</RCC>
