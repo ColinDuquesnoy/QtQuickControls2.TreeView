@@ -1,4 +1,4 @@
-# QmlTreeView
+# QtQuickControls2.TreeView
 
 This repository contains the sources for a QML TreeView Item that works with QtQuickControls2.
 
