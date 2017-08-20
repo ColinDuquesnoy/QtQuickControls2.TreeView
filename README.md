@@ -1,4 +1,5 @@
 # QtQuickControls2.TreeView
+[![Build Status](https://travis-ci.org/ColinDuquesnoy/QtQuickControls2.TreeView.svg?branch=master)](https://travis-ci.org/ColinDuquesnoy/QtQuickControls2.TreeView)
 
 This repository contains the sources for a QML TreeView Item that works with QtQuickControls2.
 
@@ -25,12 +26,13 @@ It handles indentation and expanding/collapsing of nodes automatically for you.
 
 * There is also a small ``tests`` suite (using the [catch testing framework](https://github.com/philsquared/Catch) ) that you can run using ``ctest``.
 
-* The ``example`` create two tree model: a StandardItemModel and QFileSystemModel. It then wraps those two models in a 
-FlattenedProxyModel and exposes them via a context property.
+* The ``example`` create two tree model: a ``StandardItemModel`` and ``QFileSystemModel``. It then wraps those two models in a 
+``TreeViewModel``  and exposes them via a context property.
+
 
 ## How can I use it ?
 
-License here is "super-open", not even copy-left or copy-right, just use it as you want, as it's the most practical to you :
+License here is "super-open", not even copy-left or copy-right, just use it as you want, as it's the most practical to you:
 
 - if you want to use it as GIT submodule and compile it in your app, do it!
 - if you prefer separate project as a shared library, do it!
