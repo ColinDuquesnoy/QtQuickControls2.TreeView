@@ -6,7 +6,7 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QFileSystemModel>
 #include <QtWidgets/QTreeView>
-#include "FlattenedProxyModel.h"
+#include "TreeViewModel.h"
 
 int main(int argc, char** argv) {
     QApplication qtApp(argc, argv);
@@ -31,18 +31,17 @@ int main(int argc, char** argv) {
     standardItemModel.appendRow(&root);
 
     QFileSystemModel fileSystemModel;
-    fileSystemModel.setRootPath(QDir::currentPath());
+//    QModelIndex rootIndex = fileSystemModel.setRootPath(QDir::currentPath());
 
-    qmlRegisterType<FlattenedProxyModel>("TreeView", 1, 0, "FlattenedProxyModel");
+    TreeViewModel standardItemTreeViewModel;
+    standardItemTreeViewModel.setSourceModel(&standardItemModel);
 
+    TreeViewModel fileSystemTreeViewModel;
+    fileSystemTreeViewModel.setSourceModel(&fileSystemModel);
+//    fileSystemTreeViewModel.setRootIndex(rootIndex);
 
-//    QTreeView treeView;
-//    treeView.setModel(&fileSystemModel);
-//    treeView.expandAll();
-//    treeView.show();
-
-    qmlApplicationEngine.rootContext()->setContextProperty("standardItemModel", &standardItemModel);
-    qmlApplicationEngine.rootContext()->setContextProperty("fileSystemModel", &fileSystemModel);
+    qmlApplicationEngine.rootContext()->setContextProperty("standardItemModel", &standardItemTreeViewModel);
+    qmlApplicationEngine.rootContext()->setContextProperty("fileSystemModel", &fileSystemTreeViewModel);
     qmlApplicationEngine.load(QUrl("qrc:/main.qml"));
 
     return qtApp.exec();

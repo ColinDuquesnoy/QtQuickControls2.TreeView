@@ -1,7 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.2
-import TreeView 1.0
 
 ScrollView {
     id: control
@@ -15,14 +14,8 @@ ScrollView {
         id: listView
 
         anchors.fill: parent
-        model: d.proxyModel
+        model: control.model
 
         delegate: control.delegate
-    }
-
-    QtObject {
-        id: d
-
-        property var proxyModel: FlattenedProxyModel { sourceModel: control.model }
     }
 }

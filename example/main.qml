@@ -3,6 +3,8 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.2
 import QtQuick.Controls.Material 2.2
 
+import "qrc:/../imports"
+
 ApplicationWindow {
     id: window
     width: 800; height: 600
@@ -22,8 +24,7 @@ ApplicationWindow {
             TreeView {
                 anchors.fill: parent
                 model: standardItemModel
-
-                delegate: TreeItemDelegate {
+                delegate: TreeItemView {
                     arrow: Label {
                         font.family: "monospace"
                         text: ">"
@@ -61,7 +62,7 @@ ApplicationWindow {
                 anchors.fill: parent
                 model: fileSystemModel
 
-                delegate: TreeItemDelegate {
+                delegate: TreeItemView {
                     arrow: Label {
                         font.family: "monospace"
                         text: ">"

@@ -2,7 +2,7 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>qtquickcontrols2.conf</file>
-        <file>TreeView.qml</file>
-        <file>TreeItemDelegate.qml</file>
+        <file>../imports/TreeView.qml</file>
+        <file>../imports/TreeItemView.qml</file>
     </qresource>
 </RCC>

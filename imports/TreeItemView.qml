@@ -11,8 +11,7 @@ ItemDelegate {
     property int indentation: 32
 
     clip: true
-
-    // collapsed items have a null heigh
+    // collapsed items have a null height
     height: model.hidden ? 0 : implicitHeight
     // fill available width
     width: ListView.view.width
@@ -28,8 +27,13 @@ ItemDelegate {
             model.isExpanded = !model.isExpanded
     }
 
-    contentItem: RowLayout {
+    RowLayout {
         id: layout
+        anchors.fill: parent
+        anchors.leftMargin: parent.leftPadding
+        anchors.rightMargin: parent.rightPadding
+        anchors.topMargin: parent.topPadding
+        anchors.bottomMargin: parent.bottomPadding
 
         Item {
             // this is what make the list look like a tree
