@@ -15,13 +15,14 @@
  * Use the setSourceModel method to set the source TreeModel (e.g. QFileSystemModel)
  */
 class TreeViewModel: public QAbstractProxyModel {
+public:
     enum TreeRoles {
         Indentation = Qt::UserRole + 1,
         HasChildren,
         IsExpanded,
         Hidden
     };
-public:
+
     TreeViewModel(QObject* parent= nullptr) : QAbstractProxyModel(parent)
     {
     }
@@ -75,14 +76,14 @@ public:
         return sourceModel()->columnCount(mapToSource(parent));
     }
 
-    int rowCount(const QModelIndex &parent) const override
+    int rowCount(const QModelIndex &parent=QModelIndex()) const override
     {
         if (!parent.isValid())
             return flattenedTree_.count();
         return 0;
     }
 
-    QModelIndex index(int row, int column, const QModelIndex &parent) const override
+    QModelIndex index(int row, int column=0, const QModelIndex &parent=QModelIndex()) const override
     {
         if (parent.isValid())
             return QModelIndex();

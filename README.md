@@ -19,11 +19,11 @@ flatten a source tree model.
 * The core of the library can be found in the ``lib`` folder. This is a header only library that contains the ``TreeViewModel`` 
 and the ``TreeItemViewModel``
 
-* The ``imports`` directory contains an example qml implementation of the TreeView and the TreeItemDelegate items. 
-The delegate is extensible: you can specify the component to use to to render both the arrow and the display item. 
-It handles indentation and expanding/collapsing automatically for you.
+* The ``imports`` directory contains the qml implementation of the TreeView and the TreeItemView. 
+The TreeItemView delegate is extensible: you can specify the component to use to to render both the arrow and the display items. 
+It handles indentation and expanding/collapsing of nodes automatically for you.
 
-* There is also a small ``tests`` suite (using the [catch testing framework]() ) that you can run using ``ctest``.
+* There is also a small ``tests`` suite (using the [catch testing framework](https://github.com/philsquared/Catch) ) that you can run using ``ctest``.
 
 * The ``example`` create two tree model: a StandardItemModel and QFileSystemModel. It then wraps those two models in a 
 FlattenedProxyModel and exposes them via a context property.
