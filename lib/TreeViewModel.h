@@ -2,6 +2,7 @@
 
 #include <QAbstractProxyModel>
 #include "TreeItemViewModel.h"
+#include <QDebug>
 
 /**
  * @brief Proxy model that flattens any source TreeModel to make it suitable to display in a qml ListView (see TreeView.qml).
@@ -47,18 +48,21 @@ public:
     void setSourceModel(QAbstractItemModel *sourceModel) override
     {
         QAbstractProxyModel::setSourceModel(sourceModel);
+
         doResetModel(sourceModel);
 
         if (sourceModel != nullptr) {
             connect(sourceModel, &QAbstractItemModel::dataChanged, this, &TreeViewModel::onSourceDataChanged);
             connect(sourceModel, &QAbstractItemModel::rowsInserted, this, &TreeViewModel::onRowsInserted);
             connect(sourceModel, &QAbstractItemModel::rowsRemoved, this, &TreeViewModel::onRowsRemoved);
+            connect(sourceModel, &QAbstractItemModel::rowsMoved, this, &TreeViewModel::onRowsMoved);
+            connect(sourceModel, &QAbstractItemModel::layoutChanged, this, &TreeViewModel::onLayoutChanged);
         }
     }
 
     QModelIndex mapToSource(const QModelIndex &proxyIndex) const override
     {
-        if (!proxyIndex.isValid() || !flattenedTree_.count() < proxyIndex.row())
+        if (!proxyIndex.isValid() || !flattenedTree_.count() > proxyIndex.row())
             return QModelIndex();
         return flattenedTree_[proxyIndex.row()]->sourceIndex();
     }
@@ -108,7 +112,7 @@ public:
             case Hidden:
                 return flattenedTree_[proxyIndex.row()]->isHidden();
             default:
-                return flattenedTree_[proxyIndex.row()]->sourceIndex().data(role);
+                return QAbstractProxyModel::data(proxyIndex, role);
         }
     }
 
@@ -134,8 +138,15 @@ public:
     }
 
 private slots:
+    void onLayoutChanged()
+    {
+        qDebug() << "onLayoutChanged";
+        doResetModel(sourceModel());
+    };
+
     void onSourceDataChanged(QModelIndex topLeft, QModelIndex bottomRight)
     {
+        qDebug() << "onSourceDataChanged";
         emit dataChanged(mapFromSource(topLeft), mapFromSource(bottomRight));
     }
 
@@ -143,28 +154,32 @@ private slots:
     {
         TreeItemViewModel* parentNode = findItemByIndex(parent);
 
-        if (parentNode == nullptr)
-            return;
+        qDebug() << "onRowsInserted" << parent.data() << first << last;
 
         int firstRow = 0;
         int lastRow = 0;
 
         for (int row = first; row < last + 1; ++row) {
             QModelIndex childIndex = parent.child(row, 0);
-            TreeItemViewModel* n = parentNode->addChild(childIndex);
+            TreeItemViewModel* n = parentNode->insertChild(row, childIndex);
             if (row == first)
                 firstRow = n->row();
-            else if (row == last)
+            if (row == last)
                 lastRow = n->row();
         }
         beginInsertRows(QModelIndex(), firstRow, lastRow);
-
         endInsertRows();
+    }
+
+    void onRowsMoved(const QModelIndex &parent, int start, int end, const QModelIndex &destinationParent,
+                     int destinationRow)
+    {
+        qDebug() << "onRowsMoved";
     }
 
     void onRowsRemoved(const QModelIndex& parent, int first, int last)
     {
-        // TODO
+        qDebug() << "onRowsRemoved";
     }
 
 private:
@@ -182,15 +197,17 @@ private:
 
         for(int rowIndex = 0; rowIndex < rows; ++rowIndex) {
             QModelIndex index = model->index(rowIndex, 0, parent);
-
             TreeItemViewModel* node = nullptr;
             if (parentNode)
                 node = parentNode->addChild(index);
             else
-                node = new TreeItemViewModel(parentNode, index, flattenedTree_, this);
+                node = new TreeItemViewModel(parentNode, index, flattenedTree_, this, expandedMap_, hiddenMap);
 
             if (node->hasChildren())
                 flatten(model, index, node);
+
+            if (node->isExpanded())
+                node->setExpanded(node->isExpanded());
         }
     }
 
@@ -216,6 +233,8 @@ private:
     }
 
     QList<TreeItemViewModel*> flattenedTree_;
+    QMap<QModelIndex, bool> expandedMap_;
+    QMap<QModelIndex, bool> hiddenMap;
 //    TreeItemViewModel* rootItem_ = nullptr;
 };
 

@@ -19,7 +19,7 @@ ItemDelegate {
     onDoubleClicked: toggleIsExpanded()
 
     Behavior on height {
-        NumberAnimation { duration: 100 }
+        NumberAnimation { duration: 66 }
     }
 
     function toggleIsExpanded() {
@@ -44,7 +44,6 @@ ItemDelegate {
             id: arrowControl
 
             contentItem: delegateRoot.arrow != null ? delegateRoot.arrow.createObject(arrowControl, {"model": model}) : null
-            visible: model.hasChildren
 
             onClicked: toggleIsExpanded()
 

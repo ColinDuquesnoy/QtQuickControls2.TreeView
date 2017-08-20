@@ -65,7 +65,7 @@ ApplicationWindow {
                 delegate: TreeItemView {
                     arrow: Label {
                         font.family: "monospace"
-                        text: ">"
+                        text: model.hasChildren ? ">" : " "
                         rotation: model.isExpanded ? 90 : 0
                         verticalAlignment: Label.AlignVCenter
                     }

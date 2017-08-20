@@ -14,6 +14,7 @@ ScrollView {
         id: listView
 
         anchors.fill: parent
+        cacheBuffer: 10000
         model: control.model
 
         delegate: control.delegate

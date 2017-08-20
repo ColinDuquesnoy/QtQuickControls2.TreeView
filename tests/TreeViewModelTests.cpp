@@ -113,3 +113,36 @@ SCENARIO("TreeItem can be collapsed and expanded")
         }
     }
 }
+
+SCENARIO("TreeItem can be inserted dynamically")
+{
+    GIVEN("A TreeViewModel with a root node and some child nodes") {
+        TreeViewModel treeViewModel;
+        unique_ptr<QStandardItemModel> standardItemModel = make_unique<QStandardItemModel>();
+        QList<QStandardItem*> allItems = makeBasicStandardItemModel(standardItemModel.get());
+        treeViewModel.setSourceModel(standardItemModel.get());
+
+        QStandardItem* child1 = allItems[1];
+        QString firstChildText = allItems[2]->text();
+        QString secondChildText = allItems[3]->text();
+
+        WHEN("a new item is inserted in the source model between two items") {
+            QStandardItem* insertedItem = new QStandardItem("Inserted Item");
+            child1->insertRow(1, insertedItem);
+
+            THEN("count is incremented") {
+                REQUIRE(treeViewModel.rowCount() == allItems.count() + 1);
+            }
+
+            AND_THEN("inserted item is at the correct position") {
+                QModelIndex child1OfChild1Index = treeViewModel.index(2);
+                QModelIndex insertedItemIndex = treeViewModel.index(3);
+                QModelIndex child2OfChild1Index = treeViewModel.index(4);
+
+                REQUIRE(treeViewModel.data(child1OfChild1Index, Qt::DisplayRole).toString().toStdString() == firstChildText.toStdString());
+                REQUIRE(treeViewModel.data(insertedItemIndex, Qt::DisplayRole).toString().toStdString() == insertedItem->text().toStdString());
+                REQUIRE(treeViewModel.data(child2OfChild1Index, Qt::DisplayRole).toString().toStdString() == secondChildText.toStdString());
+            }
+        }
+    }
+}

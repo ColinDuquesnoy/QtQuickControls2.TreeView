@@ -6,7 +6,41 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QFileSystemModel>
 #include <QtWidgets/QTreeView>
+#include <QtCore/QSortFilterProxyModel>
 #include "TreeViewModel.h"
+
+class SortFilterProxyModel : public QSortFilterProxyModel
+{
+public:
+    bool lessThan(const QModelIndex &left, const QModelIndex &right) const override
+    {
+        // If sorting by file names column
+        if (sortColumn() == 0) {
+            QFileSystemModel *fsm = qobject_cast<QFileSystemModel*>(sourceModel());
+            bool asc = sortOrder() == Qt::AscendingOrder ? true : false;
+
+            QFileInfo leftFileInfo  = fsm->fileInfo(left);
+            QFileInfo rightFileInfo = fsm->fileInfo(right);
+
+
+            // If DotAndDot move in the beginning
+            if (sourceModel()->data(left).toString() == "..")
+                return asc;
+            if (sourceModel()->data(right).toString() == "..")
+                return !asc;
+
+            // Move dirs upper
+            if (!leftFileInfo.isDir() && rightFileInfo.isDir()) {
+                return !asc;
+            }
+            if (leftFileInfo.isDir() && !rightFileInfo.isDir()) {
+                return asc;
+            }
+        }
+
+        return QSortFilterProxyModel::lessThan(left, right);
+    }
+};
 
 int main(int argc, char** argv) {
     QApplication qtApp(argc, argv);
@@ -31,14 +65,24 @@ int main(int argc, char** argv) {
     standardItemModel.appendRow(&root);
 
     QFileSystemModel fileSystemModel;
-//    QModelIndex rootIndex = fileSystemModel.setRootPath(QDir::currentPath());
+    fileSystemModel.sort(0);
+    /*QModelIndex rootIndex = */fileSystemModel.setRootPath(QDir::currentPath());
 
     TreeViewModel standardItemTreeViewModel;
     standardItemTreeViewModel.setSourceModel(&standardItemModel);
 
     TreeViewModel fileSystemTreeViewModel;
-    fileSystemTreeViewModel.setSourceModel(&fileSystemModel);
-//    fileSystemTreeViewModel.setRootIndex(rootIndex);
+
+    SortFilterProxyModel sortFilterProxyModel;
+    sortFilterProxyModel.setDynamicSortFilter(true);
+    sortFilterProxyModel.sort(0);
+    sortFilterProxyModel.setSourceModel(&fileSystemModel);
+
+    fileSystemTreeViewModel.setSourceModel(&sortFilterProxyModel);
+
+    QTreeView tv;
+    tv.setModel(&sortFilterProxyModel);
+    tv.show();
 
     qmlApplicationEngine.rootContext()->setContextProperty("standardItemModel", &standardItemTreeViewModel);
     qmlApplicationEngine.rootContext()->setContextProperty("fileSystemModel", &fileSystemTreeViewModel);
