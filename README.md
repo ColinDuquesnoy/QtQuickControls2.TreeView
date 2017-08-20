@@ -1,11 +1,20 @@
 # QtQuickControls2.TreeView
 [![Build Status](https://travis-ci.org/ColinDuquesnoy/QtQuickControls2.TreeView.svg?branch=master)](https://travis-ci.org/ColinDuquesnoy/QtQuickControls2.TreeView)
 
-This repository contains the sources for a QML TreeView Item that works with QtQuickControls2.
+This repository contains the sources for a QtQuickControls2 based TreeView control that you can use in your qml desktop application.
+
+## State
+
+This user control is in alpha version. There are some missing features or things that do not work yet:
+
+- dynamic insertion works by appending items, order is not correct at the moment
+- dynamic removal does not work
+- there is no selection model
+- root index cannot be set
 
 ## Why this project?
 
-QtQuickControls2 does not provide a TreeView item yet because it focus on mobile application development where 
+QtQuickControls2 do not provide a TreeView control yet because they focus on mobile application development where 
 tree view are not that common. But QtQuickControls2 can also be used to develop nice desktop applications and a tree view
 component is often needed. I needed a TreeView for one of my personal (but still private) project so I decided to 
 create a one myself.
